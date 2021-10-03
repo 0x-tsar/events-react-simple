@@ -25,13 +25,20 @@ function App() {
         setState((state) => [...state, account, contract]);
 
         //listen for new events
+        setData([]);
+
         contract.events.buyEvent(
           {
-            fromBlock: "latest",
+            fromBlock: 0, // all the blocks
+            // fromBlock: "latest", //from this time on
           },
           function (error, event) {
-            console.log(event);
-            // setData((data) => [...data, {}]);
+            const ev = event.event;
+            const address = event.returnValues.addr;
+            const price = event.returnValues.price;
+            const product = event.returnValues.product;
+
+            setData((data) => [...data, { ev, address, price, product }]);
           }
         );
       } else {
@@ -59,6 +66,21 @@ function App() {
     <div className="App">
       <button onClick={() => buy()}>Buy Action</button>
       <button onClick={() => sell()}>Sell Action</button>
+      <br></br>
+      <div>
+        {data.map((item, key) => {
+          return (
+            <div key={key}>
+              <br></br>
+              <div>event: {item.ev}</div>
+              <div>address: {item.address}</div>
+              <div>price: {item.price}</div>
+              <div>product: {item.product}</div>
+              <br></br>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
